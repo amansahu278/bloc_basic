@@ -1,42 +1,20 @@
 import 'dart:async';
+import 'package:bloc/bloc.dart';
 import 'package:bloc_1/counter_event.dart';
 
-class CounterBloc{
-  int _counter = 0;
+import 'counter_state.dart';
 
-  //Counter state
-  final StreamController _counterStateController = StreamController<int>();
-  StreamSink<int> get _inCounter => _counterStateController.sink; //Event
-  Stream<int> get counter => _counterStateController.stream;  //Action or state, this is what we wil listen to
+class CounterBloc extends Bloc<CounterEvent, CounterState>{
 
-  // Counter event
-  final StreamController _counterEventController = StreamController<CounterEvent>();
-  StreamSink<CounterEvent> get counterEventSink => _counterEventController.sink;
+  CounterBloc(CounterState initialState) : super(initialState);
 
-  /* MY understanding
-  * A sink is an input stream and stream is output stream
-  * We add things to a sink and the stream recieves those.
-  * Here, we add Increment/Decrement Event to the sink,
-  * the _counterEventController stream recieves it, we listen for the occurence
-  * of such events and appropriatelu add values to the _counterState sink,
-  * since some value is inputted to _counterStateSink, the stream picks up that value
-  * */
-
-  CounterBloc(){
-    _counterEventController.stream.listen(_mapEventToState);
-  }
-
-  void _mapEventToState(event) {
-    if (event is IncrementEvent){
-      _counter ++;
-    } else {
-      _counter --;
+  @override
+  Stream<CounterState> mapEventToState(CounterEvent event) async* {
+    if(event is IncrementEvent){
+      yield state..counter += 1;
+    } else if(event is DecrementEvent){
+      yield state..counter -= 1;
     }
-    _inCounter.add(_counter);
   }
-
-  void dispose(){
-    _counterEventController.close();
-    _counterStateController.close();
-  }
+  
 }

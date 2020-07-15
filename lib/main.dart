@@ -1,7 +1,8 @@
 import 'package:bloc_1/counter_bloc.dart';
 import 'package:bloc_1/counter_event.dart';
+import 'package:bloc_1/counter_state.dart';
 import 'package:flutter/material.dart';
-
+import 'package:bloc/bloc.dart';
 void main() {
   runApp(MyApp());
 }
@@ -30,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _bloc = CounterBloc();
+  final _counterBloc = CounterBloc(CounterState.initial());
 
   @override
   Widget build(BuildContext context) {
@@ -39,35 +40,25 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: StreamBuilder(
-          stream: _bloc.counter,
-          builder: (context, snapshot){
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'You have pushed the button this many times:',
-                ),
-                Text(
-                  '$snapshot.data',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              ],
-            );
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Pushed: "),
+            Text("0"),
+          ],
         ),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           FloatingActionButton(
-            onPressed: () => _bloc.counterEventSink.add(IncrementEvent()),
+            onPressed: (){},
             tooltip: 'Increment',
             child: Icon(Icons.add),
           ),
           SizedBox(width: 10,),
           FloatingActionButton(
-            onPressed: () => _bloc.counterEventSink.add(DecrementEvent()),
+            onPressed: (){},
             tooltip: 'Decrement',
             child: Icon(Icons.remove),
           )
@@ -76,15 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter --;
-    });
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _counterBloc.close();
   }
 }
