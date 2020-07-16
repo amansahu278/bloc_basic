@@ -2,7 +2,8 @@ import 'package:bloc_1/counter_bloc.dart';
 import 'package:bloc_1/counter_event.dart';
 import 'package:bloc_1/counter_state.dart';
 import 'package:flutter/material.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -39,26 +40,31 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("Pushed: "),
-            Text("0"),
-          ],
-        ),
+      body: BlocBuilder<CounterBloc, CounterState>(
+        bloc: _counterBloc,
+        builder: (context, CounterState state){
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Pushed: "),
+                Text("${state.counter}"),
+              ],
+            ),
+          );
+        }
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           FloatingActionButton(
-            onPressed: (){},
+            onPressed: () => _counterBloc.onIncrement(),
             tooltip: 'Increment',
             child: Icon(Icons.add),
           ),
           SizedBox(width: 10,),
           FloatingActionButton(
-            onPressed: (){},
+            onPressed: () => _counterBloc.onDecrement(),
             tooltip: 'Decrement',
             child: Icon(Icons.remove),
           )
@@ -69,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _counterBloc.close();
   }
