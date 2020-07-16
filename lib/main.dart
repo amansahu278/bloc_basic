@@ -32,16 +32,34 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _counterBloc = CounterBloc(CounterState.initial());
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => CounterBloc(CounterState.initial()),
+      child: CounterWidget(widget: widget),
+    );
+  }
+
+}
+
+class CounterWidget extends StatelessWidget {
+  const CounterWidget({
+    Key key,
+    @required this.widget,
+
+  }) : super(key: key);
+
+  final MyHomePage widget;
 
   @override
   Widget build(BuildContext context) {
+    var _counterBloc = BlocProvider.of<CounterBloc>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: BlocBuilder<CounterBloc, CounterState>(
-        bloc: _counterBloc,
+        bloc: BlocProvider.of<CounterBloc>(context),
         builder: (context, CounterState state){
           return Center(
             child: Column(
@@ -71,11 +89,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _counterBloc.close();
   }
 }
